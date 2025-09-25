@@ -16,6 +16,8 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
+import servicios.PaisServicio;
+
 public class FrmDivisionPolitica extends JFrame {
 
     private JTree arbol;
@@ -69,11 +71,30 @@ public class FrmDivisionPolitica extends JFrame {
     }
 
     private void cargarDatos() {
+        PaisServicio.cargarDatos();
+        PaisServicio.mostrar(nodoRaiz);
+    }
 
+    private String obtenerPais(DefaultMutableTreeNode nodo) {
+        while (nodo != null) {
+            if (nodo.getParent() == nodoRaiz) { // Si el padre inmediato es la raíz "Paises"
+                return nodo.toString().replace("á", "a")
+                        .replace("é", "e")
+                        .replace("í", "i")
+                        .replace("ó", "o")
+                        .replace("ú", "u"); // Es un país
+            }
+            nodo = (DefaultMutableTreeNode) nodo.getParent();
+        }
+        return "";
     }
 
     private void mostrarMapa() {
-
+        DefaultMutableTreeNode nodoSeleccionado = (DefaultMutableTreeNode) arbol.getLastSelectedPathComponent();
+        if (nodoSeleccionado != null) {
+            String nombrePais = obtenerPais(nodoSeleccionado);
+            PaisServicio.mostrarMapa(lblMapa, nombrePais);
+        }
     }
 
     private void reproducirHimno() {
